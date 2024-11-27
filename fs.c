@@ -359,10 +359,10 @@ int file_remove(char *name)
 	}
 
 	//replace file in dir with the last one and then set last to null to delete
-	if(i != curDir.numEntry - 1){
+	if(i != curDir.numEntry - 1)
 		curDir.dentry[ind] = curDir.dentry[curDir.numEntry - 1];
-	curDir.dentry[curDir.numEntry - 1] = NULL;
-	
+	curDir.dentry[curDir.numEntry - 1].name = NULL;
+	curDir.dentry[curDir.numEntry - 1].inode = 0;
 	//set curdir last modified to current time
 	gettimeofday(&(inode[curDir.dentry[0].inode].lastAccess), NULL);
 	
