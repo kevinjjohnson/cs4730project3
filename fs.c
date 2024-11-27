@@ -356,7 +356,7 @@ int file_remove(char *name)
 	//find the file to be removed in the curdir
 	int ind = 0;
 	for(i = 0; i < curDir.numEntry; i++){
-		if(curDir.dentry[i].inode = inodeNum)ind = i;
+		if(curDir.dentry[i].inode == inodeNum)ind = i;
 	}
 	printf("removing file with index: %d\n", ind);
 
