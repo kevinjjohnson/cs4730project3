@@ -299,7 +299,7 @@ int file_read(char *name, int offset, int size)
 			readSize -= (BLOCK_SIZE - offset);
 			if(readSize < 0) readSize = 0;
 		}
-		cur+= readSize
+		cur+= readSize;
 		offset = 0;
 	}
 	printf("%s\n", output);
