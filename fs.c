@@ -352,17 +352,20 @@ int file_remove(char *name)
 		return -1;
 	}
 
+	printf("removing file with inodenum: %d\n", inodeNum);
+
 	//find the file to be removed in the curdir
 	int ind = 0;
 	for(i = 0; i < curDir.numEntry; i++){
 		if(curDir.dentry->inode = inodeNum)ind = i;
 	}
+	printf("removing file with index: %d\n", ind);
 
 	//replace file in dir with the last one and then set count - 1
 	if(i != curDir.numEntry - 1)
 		curDir.dentry[ind] = curDir.dentry[curDir.numEntry - 1];
 	curDir.numEntry - 1;
-	
+
 	//set curdir last modified to current time
 	gettimeofday(&(inode[curDir.dentry[0].inode].lastAccess), NULL);
 	
