@@ -293,18 +293,18 @@ int file_read(char *name, int offset, int size)
 		disk_read(block, buff);
 
 		if(readSize >= BLOCK_SIZE){
-			memcpy((output + cur), buff + offset, BLOCK_SIZE - offset);
-			cur+= BLOCK_SIZE - offset;
-			readSize -= (BLOCK_SIZE - offset);
+			memcpy((output + cur), buff + readOffset, BLOCK_SIZE - readOffset);
+			cur+= BLOCK_SIZE - readOffset;
+			readSize -= (BLOCK_SIZE - readOffset);
 		}else{
 			printf("Yuphere\n");
-			memcpy( (output + cur), buff + offset, readSize);
+			memcpy( (output + cur), buff + readOffset, readSize);
 			cur+= readSize;
-			readSize -= (BLOCK_SIZE - offset);
+			readSize -= (BLOCK_SIZE - readOffset);
 			if(readSize < 0) readSize = 0;
 		}
 		
-		offset = 0;
+		readOffset = 0;
 	}
 	printf("%s\n", output);
 	gettimeofday( &(inode[inodeNum].lastAccess), NULL );
