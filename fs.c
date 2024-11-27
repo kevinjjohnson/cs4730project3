@@ -297,7 +297,7 @@ int file_read(char *name, int offset, int size)
 			cur+= readSize;
 			readSize -= (BLOCK_SIZE - offset);
 		}else{
-			printf("Yuphere");
+			printf("Yuphere\n");
 			memcpy( (output + cur), buff + offset, readSize);
 			cur+= readSize;
 			readSize -= (BLOCK_SIZE - offset);
