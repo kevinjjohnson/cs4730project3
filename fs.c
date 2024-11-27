@@ -258,7 +258,6 @@ int file_read(char *name, int offset, int size)
 
 	inodeNum = search_cur_dir(name);
 	
-
 	//check if valid input
 	if(inodeNum < 0)
 	{
@@ -281,15 +280,11 @@ int file_read(char *name, int offset, int size)
 	readBlock = offset / BLOCK_SIZE;
 	readOffset = offset % BLOCK_SIZE;
 	readSize = size;
+
 	int cur = 0;
 	for(i = readBlock; i < inode[inodeNum].blockCount; i++){
-		printf("Reading from offset: %d\n", readOffset);
-		printf("Reading from block: %d\n", i);
 		int block;
 		block = inode[inodeNum].directBlock[i];
-		printf("Reading from block#: %d\n", block);
-		printf("Reading size: %d\n", readSize - readOffset);
-		printf("Writing to index: %d\n", cur);
 		disk_read(block, buff);
 
 		if(readSize >= BLOCK_SIZE){
@@ -297,7 +292,6 @@ int file_read(char *name, int offset, int size)
 			cur+= BLOCK_SIZE - readOffset;
 			readSize -= (BLOCK_SIZE - readOffset);
 		}else{
-			printf("Yuphere\n");
 			memcpy( (output + cur), buff + readOffset, readSize);
 			cur+= readSize - 1;
 			readSize -= (BLOCK_SIZE - readOffset);
@@ -338,8 +332,50 @@ int file_stat(char *name)
 
 int file_remove(char *name)
 {
-		printf("Error: rm is not implemented.\n");
-		return 0;
+	int inodeNum, i;
+
+	inodeNum = search_cur_dir(name);
+	
+	//check if valid input
+	if(inodeNum < 0)
+	{
+		printf("remove error: file not found\n");
+		return -1;
+	}
+	if(inode[inodeNum].type == directory)
+	{
+		printf("remove error: cannot remove directory\n");
+		return -1;
+	}
+	if(inode[inodeNum].link_count > 1){
+		printf("remove error: cannot remove file with hard links\n");
+		return -1;
+	}
+
+	//find the file to be removed in the curdir
+	int ind = 0;
+	for(i = 0; i < curDir.numEntry; i++){
+		if(curDir.dentry->inode = inodeNum)ind = i
+	}
+
+	//replace file in dir with the last one and then set last to null to delete
+	if(i != curDir.numEntry - 1){
+		curDir[ind] = curDir[curDir.numEntry - 1];
+	curDir[curDir.numEntry - 1] = NULL;
+	
+	//set curdir last modified to current time
+	gettimeofday(&(inode[curDir.dentry[0].inode].lastAccess), NULL);
+	
+	//free data blocks
+	for(i = 0; i < inode[inodeNum].blockCount; i++){
+		set_bit(blockMap, inode[inodeNum].directBlock[i], 0);
+	}
+
+	//free inode block
+	set_bit(inodeMap, inodeNum, 0);
+
+	
+	return 0;
 }
 
 int dir_make(char* name)
