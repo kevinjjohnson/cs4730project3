@@ -292,14 +292,14 @@ int file_read(char *name, int offset, int size)
 		disk_read(block, buff);
 
 		if(readSize >= BLOCK_SIZE){
-			memcpy( cur, buff + offset, BLOCK_SIZE - offset );
+			memcpy((output + cur), buff + offset, BLOCK_SIZE - offset );
 			readSize -= (BLOCK_SIZE - offset);
 		}else{
-			memcpy( cur, buff + offset, readSize );
+			memcpy( (output + cur), buff + offset, readSize );
 			readSize -= (BLOCK_SIZE - offset);
 			if(readSize < 0) readSize = 0;
 		}
-		cur+= readSize;
+		cur+= readSize
 		offset = 0;
 	}
 	printf("%s\n", output);
