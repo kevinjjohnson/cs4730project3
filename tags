@@ -1,0 +1,72 @@
+BLOCK_SIZE	disk.h	1
+Dentry	fs.h	42
+DirectoryEntry	fs.h	36
+Eø‹EüHcÐH‹E¨H	fs_sim	26
+I	fs_sim	83
+Inode	fs.h	31
+MAGIC_NUMBER	fs.h	8
+MAX_BLOCK	disk.h	2
+MAX_BLOCK	fs.h	4
+MAX_DIR_ENTRY	fs.h	9
+MAX_FILE_NAME	fs.h	6
+MAX_INODE	fs.h	5
+Mfs_sim	fs_sim.c	/^int main(int argc, char **argv)$/
+SMALL_FILE	fs.h	7
+SuperBlock	fs.h	18
+TYPE	fs.h	11
+all	Makefile	/^all: fs$/
+blockCount	fs.h	27
+clean	Makefile	/^clean:$/
+command	fs_sim.c	/^bool command(char *comm, char *comm2)$/
+created	fs.h	25
+curDir	fs.c	12
+curDirBlock	fs.c	13
+dentry	fs.h	40
+dir_change	fs.c	/^int dir_change(char* name)$/
+dir_make	fs.c	/^int dir_make(char* name)$/
+dir_remove	fs.c	/^int dir_remove(char *name)$/
+directBlock	fs.h	28
+directory	fs.h	11
+disk	disk.c	5
+disk_mount	disk.c	/^int disk_mount(char *name)$/
+disk_read	disk.c	/^int disk_read(int block, char *buf)$/
+disk_umount	disk.c	/^int disk_umount(char *name)$/
+disk_write	disk.c	/^int disk_write(int block, char *buf)$/
+execute_command	fs.c	/^int execute_command(char *comm, char *arg1, char */
+file	fs.h	11
+file_cat	fs.c	/^int file_cat(char *name)$/
+file_create	fs.c	/^int file_create(char *name, int size)$/
+file_read	fs.c	/^int file_read(char *name, int offset, int size)$/
+file_remove	fs.c	/^int file_remove(char *name)$/
+file_stat	fs.c	/^int file_stat(char *name)$/
+format_timeval	fs_util.c	/^int format_timeval(struct timeval *tv, char *buf, /
+freeBlockCount	fs.h	15
+freeInodeCount	fs.h	16
+fs	Makefile	/^fs: fs_sim.c fs.c fs.h fs_util.c disk.c disk.h$/
+fs_mount	fs.c	/^int fs_mount(char *name)$/
+fs_stat	fs.c	/^int fs_stat()$/
+fs_umount	fs.c	/^int fs_umount(char *name)$/
+get_bit	fs_util.c	/^char get_bit(char *array, int index)$/
+get_free_block	fs_util.c	/^int get_free_block()$/
+get_free_inode	fs_util.c	/^int get_free_inode()$/
+group	fs.h	23
+hard_link	fs.c	/^int hard_link(char *src, char *dest)$/
+inode	fs.c	10
+inode	fs.h	35
+lastAccess	fs.h	24
+link_count	fs.h	29
+ls	fs.c	/^int ls()$/
+magicNumber	fs.h	14
+name	fs.h	34
+numEntry	fs.h	39
+owner	fs.h	22
+padding	fs.h	17
+padding	fs.h	30
+padding	fs.h	41
+rand_string	fs_util.c	/^int rand_string(char *str, size_t size)$/
+search_cur_dir	fs.c	/^int search_cur_dir(char *name)$/
+set_bit	fs_util.c	/^void set_bit(char *array, int index, char value)$/
+size	fs.h	26
+superBlock	fs.c	11
+toggle_bit	fs_util.c	/^void toggle_bit(char *array, int index)$/
+type	fs.h	21
