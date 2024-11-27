@@ -281,6 +281,7 @@ int file_read(char *name, int offset, int size)
 	readBlock = offset / BLOCK_SIZE;
 	readOffset = offset % BLOCK_SIZE;
 	readSize = size;
+	int cur = 0;
 	for(i = readBlock; i < inode[inodeNum].blockCount; i++){
 		printf("Reading from offset: %d\n", offset);
 		printf("Reading from block: %d\n", i);
@@ -291,13 +292,14 @@ int file_read(char *name, int offset, int size)
 		disk_read(block, buff);
 
 		if(readSize >= BLOCK_SIZE){
-			memcpy( (output+i*BLOCK_SIZE), buff + offset, BLOCK_SIZE - offset );
+			memcpy( cur, buff + offset, BLOCK_SIZE - offset );
 			readSize -= (BLOCK_SIZE - offset);
 		}else{
-			memcpy( (output+i*BLOCK_SIZE), buff + offset, readSize );
+			memcpy( cur, buff + offset, readSize );
 			readSize -= (BLOCK_SIZE - offset);
 			if(readSize < 0) readSize = 0;
 		}
+		cur+= readSize;
 		offset = 0;
 	}
 	printf("%s\n", output);
