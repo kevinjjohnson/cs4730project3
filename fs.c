@@ -252,12 +252,12 @@ int file_cat(char *name)
 
 int file_read(char *name, int offset, int size)
 {
-	int inodeNum, size, i, readBlock, readOffset, first;
-	char buff[size];
+	int inodeNum, readSize, i, readBlock, readOffset, first;
+	char buff[512];
 	char* output;
 
 	inodeNum = search_cur_dir(name);
-	size = inode[inodeNum].size;
+	
 
 	//check if valid input
 	if(inodeNum < 0)
@@ -280,16 +280,17 @@ int file_read(char *name, int offset, int size)
 
 	readBlock = offset / BLOCK_SIZE;
 	readOffset = offset % BLOCK_SIZE;
-
+	readSize = size;
 	for(i = readBlock; i < inode[inodeNum].blockCount; i++){
-		int block = inode[inode].directBlock[i];
+		int block;
+		block = inode[inodeNum].directBlock[i];
 		disk_read(block, buff);
 
-		if(size >= BLOCK_SIZE){
+		if(readSize >= BLOCK_SIZE){
 			memcpy( (output+i*BLOCK_SIZE) + offset, buff, BLOCK_SIZE );
-			size -= BLOCK_SIZE;
+			readSize -= BLOCK_SIZE;
 		}else{
-			memcpy( (output+i*BLOCK_SIZE) + offset, buff, size );
+			memcpy( (output+i*BLOCK_SIZE) + offset, buff, readSize );
 		}
 		offset = 0;
 	}
