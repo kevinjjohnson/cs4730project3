@@ -288,10 +288,10 @@ int file_read(char *name, int offset, int size)
 		disk_read(block, buff);
 
 		if(readSize >= BLOCK_SIZE){
-			memcpy( (output+i*BLOCK_SIZE) + offset, buff, BLOCK_SIZE - offset );
-			readSize -= BLOCK_SIZE;
+			memcpy( (output+i*BLOCK_SIZE), buff + offset, BLOCK_SIZE - offset );
+			readSize -= (BLOCK_SIZE - offset);
 		}else{
-			memcpy( (output+i*BLOCK_SIZE) + offset, buff, readSize );
+			memcpy( (output+i*BLOCK_SIZE), buff + offset, readSize );
 		}
 		offset = 0;
 	}
