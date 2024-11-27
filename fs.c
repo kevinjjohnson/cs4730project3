@@ -282,6 +282,7 @@ int file_read(char *name, int offset, int size)
 	readOffset = offset % BLOCK_SIZE;
 	readSize = size;
 	for(i = readBlock; i < inode[inodeNum].blockCount; i++){
+		printf("Reading from offset: %d", offset);
 		int block;
 		block = inode[inodeNum].directBlock[i];
 		disk_read(block, buff);
