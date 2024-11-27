@@ -306,7 +306,6 @@ int file_read(char *name, int offset, int size)
 	return 0;
 }
 
-
 int file_stat(char *name)
 {
 		char timebuf[28];
@@ -446,7 +445,47 @@ int fs_stat()
 
 int hard_link(char *src, char *dest)
 {
-	printf("Error: ln is not implemented.\n");
+
+	int inodeNumSrc, inodeNumDest, i;
+
+	inodeNumSrc = search_cur_dir(src);
+	inodeNumDest = search_cur_dir(dest);
+	//check if src valid input
+	if(inodeNumSrc < 0)
+	{
+		printf("link error: src file not found\n");
+		return -1;
+	}
+	if(inode[inodeNumSrc].type == directory)
+	{
+		printf("link error: cannot link directory\n");
+		return -1;
+	}
+	//check if dst valid input
+	if(inodeNumDest > 0)
+	{
+		printf("link error: destination file already exists\n");
+		return -1;
+	}
+	if(inode[inodeNumDest].type == directory)
+	{
+		printf("link error: cannot link directory\n");
+		return -1;
+	}
+	if(curDir.numEntry == MAX_DIR_ENTRY){
+		printf("link error: directory is full\n");
+		return -1;
+	}
+	
+	//add new entry to the dentry table that points to same inodenum
+	strncpy(curDir.dentry[curDir.numEntry].name, dest, strlen(dest));
+	curDir.dentry[curDir.numEntry].name[strlen(dest)] = '\0';
+	curDir.dentry[curDir.numEntry].inode = inodeNumSrc;
+	curDir.numEntry++;
+
+	//increase link count
+	inode[inodeNumSrc].link_count++;
+
 	return 0;
 }
 
