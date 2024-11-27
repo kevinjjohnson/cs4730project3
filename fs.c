@@ -358,22 +358,23 @@ int file_remove(char *name)
 		if(curDir.dentry->inode = inodeNum)ind = i;
 	}
 
-	//replace file in dir with the last one and then set last to null to delete
+	//replace file in dir with the last one and then set count - 1
 	if(i != curDir.numEntry - 1)
 		curDir.dentry[ind] = curDir.dentry[curDir.numEntry - 1];
-	curDir.dentry[curDir.numEntry - 1].name = NULL;
-	curDir.dentry[curDir.numEntry - 1].inode = 0;
+	curDir.numEntry - 1;
+	
 	//set curdir last modified to current time
 	gettimeofday(&(inode[curDir.dentry[0].inode].lastAccess), NULL);
 	
 	//free data blocks
 	for(i = 0; i < inode[inodeNum].blockCount; i++){
 		set_bit(blockMap, inode[inodeNum].directBlock[i], 0);
+		superBlock.freeBlockCount++;
 	}
 
 	//free inode block
 	set_bit(inodeMap, inodeNum, 0);
-
+	superBlock.freeInodeCount++;
 	
 	return 0;
 }
