@@ -270,7 +270,7 @@ int file_read(char *name, int offset, int size)
 		printf("read error: cannot read directory\n");
 		return -1;
 	}
-	if(inode[inodeNum].size < offset + size){
+	if(inode[inodeNum].size < (size - offset)){
 		printf("read error: read is too large\n");
 		return -1;
 	}
