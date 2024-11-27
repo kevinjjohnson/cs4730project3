@@ -294,13 +294,15 @@ int file_read(char *name, int offset, int size)
 
 		if(readSize >= BLOCK_SIZE){
 			memcpy((output + cur), buff + offset, BLOCK_SIZE - offset );
+			cur+= readSize;
 			readSize -= (BLOCK_SIZE - offset);
 		}else{
 			memcpy( (output + cur), buff + offset, readSize );
+			cur+= readSize;
 			readSize -= (BLOCK_SIZE - offset);
 			if(readSize < 0) readSize = 0;
 		}
-		cur+= readSize;
+		
 		offset = 0;
 	}
 	printf("%s\n", output);
