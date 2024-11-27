@@ -252,8 +252,51 @@ int file_cat(char *name)
 
 int file_read(char *name, int offset, int size)
 {
-		printf("Error: read is not implemented.\n");
-		return 0;
+	int inodeNum, size, i, readBlock, readOffset, first;
+	char buff[size];
+	char* output;
+
+	inodeNum = search_cur_dir(name);
+	size = inode[inodeNum].size;
+
+	//check if valid input
+	if(inodeNum < 0)
+	{
+		printf("read error: file not found\n");
+		return -1;
+	}
+	if(inode[inodeNum].type == directory)
+	{
+		printf("read error: cannot read directory\n");
+		return -1;
+	}
+	if(inode[inodeNum].size < offset + size){
+		printf("read error: read is too large\n");
+		return -1;
+	}
+
+	output = (char *) malloc(sizeof(char) * (size + 1));
+	output[size] = '\0';
+
+	readBlock = offset / BLOCK_SIZE;
+	readOffset = offset % BLOCK_SIZE;
+
+	for(i = readBlock; i < inode[inodeNum].blockCount; i++){
+		int block = inode[inode].directBlock[i];
+		disk_read(block, buff);
+
+		if(size >= BLOCK_SIZE){
+			memcpy( (output+i*BLOCK_SIZE) + offset, buff, BLOCK_SIZE );
+			size -= BLOCK_SIZE;
+		}else{
+			memcpy( (output+i*BLOCK_SIZE) + offset, buff, size );
+		}
+		offset = 0;
+	}
+	printf("%s\n", output);
+	gettimeofday( &(inode[inodeNum].lastAccess), NULL );
+	free(output);
+	return 0;
 }
 
 
@@ -344,14 +387,14 @@ int ls()
 
 int fs_stat()
 {
-		printf("File System Status: \n");
-		printf("# of free blocks: %d (%d bytes), # of free inodes: %d\n", superBlock.freeBlockCount, superBlock.freeBlockCount*512, superBlock.freeInodeCount);
+	printf("File System Status: \n");
+	printf("# of free blocks: %d (%d bytes), # of free inodes: %d\n", superBlock.freeBlockCount, superBlock.freeBlockCount*512, superBlock.freeInodeCount);
 }
 
 int hard_link(char *src, char *dest)
 {
-		printf("Error: ln is not implemented.\n");
-		return 0;
+	printf("Error: ln is not implemented.\n");
+	return 0;
 }
 
 int execute_command(char *comm, char *arg1, char *arg2, char *arg3, char *arg4, int numArg)
@@ -359,8 +402,7 @@ int execute_command(char *comm, char *arg1, char *arg2, char *arg3, char *arg4, 
 
     printf ("\n");
 	if(command(comm, "df")) {
-				return fs_stat();
-
+		return fs_stat();
     // file command start    
     } else if(command(comm, "create")) {
         if(numArg < 2) {
