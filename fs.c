@@ -364,7 +364,7 @@ int file_remove(char *name)
 	//replace file in dir with the last one and then set count - 1
 	if(i != curDir.numEntry - 1)
 		curDir.dentry[ind] = curDir.dentry[curDir.numEntry - 1];
-	curDir.numEntry - 1;
+	curDir.numEntry--;
 
 	//set curdir last modified to current time
 	gettimeofday(&(inode[curDir.dentry[0].inode].lastAccess), NULL);
