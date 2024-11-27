@@ -362,6 +362,7 @@ int file_remove(char *name)
 
 	//replace file in dir with the last one and then set count - 1
 	if(ind != curDir.numEntry - 1){
+		printf("RAN THIS WHY IS IT NOT WORKING IDK MAN THIS SHIT IS FUCKED");
 		curDir.dentry[ind].inode = curDir.dentry[curDir.numEntry - 1].inode;
 		strncpy(curDir.dentry[ind].name, curDir.dentry[curDir.numEntry - 1].name, strlen(curDir.dentry[curDir.numEntry - 1].name));
 	}
