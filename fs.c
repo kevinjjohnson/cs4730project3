@@ -295,6 +295,8 @@ int file_read(char *name, int offset, int size)
 			readSize -= (BLOCK_SIZE - offset);
 		}else{
 			memcpy( (output+i*BLOCK_SIZE), buff + offset, readSize );
+			readSize -= (BLOCK_SIZE - offset);
+			if(readSize < 0) readSize = 0;
 		}
 		offset = 0;
 	}
