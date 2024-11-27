@@ -361,8 +361,10 @@ int file_remove(char *name)
 	printf("removing file with index: %d\n", ind);
 
 	//replace file in dir with the last one and then set count - 1
-	if(ind != curDir.numEntry - 1)
-		curDir.dentry[ind] = curDir.dentry[curDir.numEntry - 1];
+	if(ind != curDir.numEntry - 1){
+		curDir.dentry[ind].inode = curDir.dentry[curDir.numEntry - 1].inode;
+		curDir.dentry[ind].name = curDir.dentry[curDir.numEntry - 1].name;
+	}
 	curDir.numEntry--;
 
 	//set curdir last modified to current time
