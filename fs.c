@@ -387,8 +387,56 @@ int file_remove(char *name)
 
 int dir_make(char* name)
 {
-		printf("Error: mkdir is not implemented.\n");
-		return 0;
+	int inodeNum, readSize, i, readBlock, readOffset, first;
+	char buff[512];
+	char* output;
+
+	inodeNum = search_cur_dir(name);
+	
+	//check if valid input
+	if(inodeNum >= 0)
+	{
+		printf("mkdir error: directory already exists\n");
+		return -1;
+	}
+	if(curDir.numEntry == MAX_DIR_ENTRY){
+		printf("mkdir: directory is full\n");
+		return -1;
+	}
+	if(1 > superBlock.freeBlockCount) {
+		printf("File create failed: data block is full!\n");
+		return -1;
+	}
+	if(superBlock.freeInodeCount < 1) {
+		printf("File create failed: inode is full!\n");
+		return -1;
+	}
+
+	//Init root dir
+	int newInode = get_free_inode();
+	curDirBlock = get_free_block();
+
+	inode[newInode].type = directory;
+	inode[newInode].owner = 0;
+	inode[newInode].group = 0;
+	gettimeofday(&(inode[newInode].created), NULL);
+	gettimeofday(&(inode[newInode].lastAccess), NULL);
+	inode[newInode].size = 1;
+	inode[newInode].blockCount = 1;
+	inode[newInode].directBlock[0] = curDirBlock;
+
+	curDir.numEntry = 2;
+	strncpy(curDir.dentry[0].name, ".", 1);
+	curDir.dentry[0].name[1] = '\0';
+	curDir.dentry[0].inode = newInode;
+	disk_write(curDirBlock, (char*)&curDir);
+
+	strncpy(curDir.dentry[0].name, "..", 1);
+	curDir.dentry[0].name[1] = '\0';
+	curDir.dentry[0].inode = curDir.dentry[0].inode;
+	disk_write(curDirBlock, (char*)&curDir);
+
+	return 0;
 }
 
 int dir_remove(char *name)
@@ -466,7 +514,7 @@ int hard_link(char *src, char *dest)
 		return -1;
 	}
 	//check if dst valid input
-	if(inodeNumDest > 0)
+	if(inodeNumDest >= 0)
 	{
 		printf("link error: destination file already exists\n");
 		return -1;
