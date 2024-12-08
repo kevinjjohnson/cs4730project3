@@ -415,7 +415,7 @@ int dir_make(char* name)
 
 	//Init root dir
 	int newInode = get_free_inode();
-	newDirBlock = get_free_block();
+	int newDirBlock = get_free_block();
 
 	inode[newInode].type = directory;
 	inode[newInode].owner = 0;
@@ -424,18 +424,18 @@ int dir_make(char* name)
 	gettimeofday(&(inode[newInode].lastAccess), NULL);
 	inode[newInode].size = 1;
 	inode[newInode].blockCount = 1;
-	inode[newInode].directBlock[0] = curDirBlock;
+	inode[newInode].directBlock[0] = newDirBlock;
 
 	newDir.numEntry = 2;
+	
 	strncpy(newDir.dentry[0].name, ".", 1);
 	newDir.dentry[0].name[1] = '\0';
 	newDir.dentry[0].inode = newInode;
-	disk_write(newDirBlock, (char*)&newDir);
 
 	strncpy(newDir.dentry[1].name, "..", 2);
 	newDir.dentry[0].name[2] = '\0';
 	newDir.dentry[0].inode = curDir.dentry[0].inode;
-	disk_write(curDirBlock, (char*)&newDir);
+	disk_write(newDirBlock, (char*)&newDir);
 
 	return 0;
 }
