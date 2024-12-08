@@ -442,8 +442,8 @@ int dir_make(char* name)
 
 int dir_remove(char *name)
 {
-		printf("Error: rmdir is not implemented.\n");
-		return 0;
+	printf("Error: rmdir is not implemented.\n");
+	return 0;
 }
 
 int dir_change(char* name)
