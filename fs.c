@@ -436,8 +436,8 @@ int dir_make(char* name)
 
 	//parent dir entry is current dir 
 	strncpy(newDir.dentry[1].name, "..", 2);
-	newDir.dentry[0].name[2] = '\0';
-	newDir.dentry[0].inode = curDir.dentry[0].inode;
+	newDir.dentry[1].name[2] = '\0';
+	newDir.dentry[1].inode = curDir.dentry[0].inode;
 	
 	//write dentry to disk
 	disk_write(newDirBlock, (char*)&newDir);
