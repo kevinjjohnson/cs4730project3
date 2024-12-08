@@ -86,9 +86,9 @@ int fs_umount(char *name)
 
 		for(i = 0; i < numInodeBlock; i++)
 		{
-				index = i+3;
-				disk_write(index, (char*) (inode+inode_index));
-				inode_index += (BLOCK_SIZE / sizeof(Inode));
+			index = i+3;
+			disk_write(index, (char*) (inode+inode_index));
+			inode_index += (BLOCK_SIZE / sizeof(Inode));
 		}
 		// current directory
 		disk_write(curDirBlock, (char*)&curDir);
@@ -413,7 +413,7 @@ int dir_make(char* name)
 		return -1;
 	}
 
-	//Init root dir
+	//Init new dir
 	int newInode = get_free_inode();
 	int newDirBlock = get_free_block();
 
@@ -426,16 +426,27 @@ int dir_make(char* name)
 	inode[newInode].blockCount = 1;
 	inode[newInode].directBlock[0] = newDirBlock;
 
+	//init new dir
 	newDir.numEntry = 2;
 	
+	//make current dir entry as the new dir
 	strncpy(newDir.dentry[0].name, ".", 1);
 	newDir.dentry[0].name[1] = '\0';
 	newDir.dentry[0].inode = newInode;
 
+	//parent dir entry is current dir 
 	strncpy(newDir.dentry[1].name, "..", 2);
 	newDir.dentry[0].name[2] = '\0';
 	newDir.dentry[0].inode = curDir.dentry[0].inode;
+	
+	//write dentry to disk
 	disk_write(newDirBlock, (char*)&newDir);
+
+	//STILL NEED TO UPDATE CURRENT DIR
+	strncpy(curDir.dentry[curDir.numEntry].name, name, strlen(name));
+	curDir.dentry[curDir.numEntry].name[strlen(name)] = '\0';
+	curDir.dentry[curDir.numEntry].inode = newInode;
+
 
 	return 0;
 }
