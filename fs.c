@@ -446,7 +446,7 @@ int dir_make(char* name)
 	strncpy(curDir.dentry[curDir.numEntry].name, name, strlen(name));
 	curDir.dentry[curDir.numEntry].name[strlen(name)] = '\0';
 	curDir.dentry[curDir.numEntry].inode = newInode;
-
+	curDir.numEntry++;
 
 	return 0;
 }
