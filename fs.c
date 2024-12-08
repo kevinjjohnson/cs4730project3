@@ -93,7 +93,7 @@ int fs_umount(char *name)
 		// current directory
 		disk_write(curDirBlock, (char*)&curDir);
 
-		disk_umount(name);	
+		disk_umount(name);
 }
 
 int search_cur_dir(char *name)
@@ -122,7 +122,7 @@ int file_create(char *name, int size)
 				return -1;
 		}
 
-		int inodeNum = search_cur_dir(name); 
+		int inodeNum = search_cur_dir(name);
 		if(inodeNum >= 0) {
 				printf("File create failed:  %s exist.\n", name);
 				return -1;
@@ -189,7 +189,7 @@ int file_create(char *name, int size)
 		}
 
 		//update last access of current directory
-		gettimeofday(&(inode[curDir.dentry[0].inode].lastAccess), NULL);		
+		gettimeofday(&(inode[curDir.dentry[0].inode].lastAccess), NULL);
 
 		printf("file created: %s, inode %d, size %d\n", name, inodeNum, size);
 
@@ -257,7 +257,7 @@ int file_read(char *name, int offset, int size)
 	char* output;
 
 	inodeNum = search_cur_dir(name);
-	
+
 	//check if valid input
 	if(inodeNum < 0)
 	{
@@ -297,7 +297,7 @@ int file_read(char *name, int offset, int size)
 			readSize -= (BLOCK_SIZE - readOffset);
 			if(readSize < 0) readSize = 0;
 		}
-		
+
 		readOffset = 0;
 	}
 	printf("%s\n", output);
@@ -334,7 +334,7 @@ int file_remove(char *name)
 	int inodeNum, i;
 
 	inodeNum = search_cur_dir(name);
-	
+
 	//check if valid input
 	if(inodeNum < 0)
 	{
@@ -371,7 +371,7 @@ int file_remove(char *name)
 
 	//set curdir last modified to current time
 	gettimeofday(&(inode[curDir.dentry[0].inode].lastAccess), NULL);
-	
+
 	//free data blocks
 	for(i = 0; i < inode[inodeNum].blockCount; i++){
 		set_bit(blockMap, inode[inodeNum].directBlock[i], 0);
@@ -381,7 +381,7 @@ int file_remove(char *name)
 	//free inode block
 	set_bit(inodeMap, inodeNum, 0);
 	superBlock.freeInodeCount++;
-	
+
 	return 0;
 }
 
@@ -390,9 +390,10 @@ int dir_make(char* name)
 	int inodeNum, readSize, i, readBlock, readOffset, first;
 	char buff[512];
 	char* output;
+    Dentry newDir;
 
 	inodeNum = search_cur_dir(name);
-	
+
 	//check if valid input
 	if(inodeNum >= 0)
 	{
@@ -414,7 +415,7 @@ int dir_make(char* name)
 
 	//Init root dir
 	int newInode = get_free_inode();
-	curDirBlock = get_free_block();
+	newDirBlock = get_free_block();
 
 	inode[newInode].type = directory;
 	inode[newInode].owner = 0;
@@ -425,16 +426,16 @@ int dir_make(char* name)
 	inode[newInode].blockCount = 1;
 	inode[newInode].directBlock[0] = curDirBlock;
 
-	curDir.numEntry = 2;
-	strncpy(curDir.dentry[0].name, ".", 1);
-	curDir.dentry[0].name[1] = '\0';
-	curDir.dentry[0].inode = newInode;
-	disk_write(curDirBlock, (char*)&curDir);
+	newDir.numEntry = 2;
+	strncpy(newDir.dentry[0].name, ".", 1);
+	newDir.dentry[0].name[1] = '\0';
+	newDir.dentry[0].inode = newInode;
+	disk_write(newDirBlock, (char*)&newDir);
 
-	strncpy(curDir.dentry[0].name, "..", 1);
-	curDir.dentry[0].name[1] = '\0';
-	curDir.dentry[0].inode = curDir.dentry[0].inode;
-	disk_write(curDirBlock, (char*)&curDir);
+	strncpy(newDir.dentry[1].name, "..", 2);
+	newDir.dentry[0].name[2] = '\0';
+	newDir.dentry[0].inode = curDir.dentry[0].inode;
+	disk_write(curDirBlock, (char*)&newDir);
 
 	return 0;
 }
@@ -451,7 +452,7 @@ int dir_change(char* name)
 
 		//get inode number
 		inodeNum = search_cur_dir(name);
-		if (inodeNum < 0) 
+		if (inodeNum < 0)
 		{
 				printf("cd error: %s does not exist\n", name);
 				return -1;
@@ -470,7 +471,7 @@ int dir_change(char* name)
 		disk_read(curDirBlock, (char*)&curDir);
 
 		//update last access of directory we are changing to
-		gettimeofday(&(inode[inodeNum].lastAccess), NULL);		
+		gettimeofday(&(inode[inodeNum].lastAccess), NULL);
 
 		return 0;
 }
@@ -528,7 +529,7 @@ int hard_link(char *src, char *dest)
 		printf("link error: directory is full\n");
 		return -1;
 	}
-	
+
 	//add new entry to the dentry table that points to same inodenum
 	strncpy(curDir.dentry[curDir.numEntry].name, dest, strlen(dest));
 	curDir.dentry[curDir.numEntry].name[strlen(dest)] = '\0';
@@ -547,7 +548,7 @@ int execute_command(char *comm, char *arg1, char *arg2, char *arg3, char *arg4, 
     printf ("\n");
 	if(command(comm, "df")) {
 		return fs_stat();
-    // file command start    
+    // file command start
     } else if(command(comm, "create")) {
         if(numArg < 2) {
             printf("error: create <filename> <size>\n");
@@ -617,4 +618,3 @@ int execute_command(char *comm, char *arg1, char *arg2, char *arg3, char *arg4, 
 	}
 	return 0;
 }
-
