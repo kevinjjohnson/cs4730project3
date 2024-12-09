@@ -466,17 +466,44 @@ int dir_remove(char *name)
 
 	dirBlock = inode[inodeNum].directBlock[0];
 	disk_read(dirBlock, (char*)&dir);
+	//if dir has more than just . and ..
 	if(dir.numEntry != 2){
+		//change into inner dir
+		dir_change(name);
+		//for each entry in dir
 		for(int i = 2; i < dir.numEntry; i++){
-			dir_change(name);
+			//try and remove that entry
 			int res = dir_remove(dir.dentry[i].name);
-			dir_change("..");
+			//if failed, cascade failure up
 			if(res == -1)
 				return res;
 		}
+		//change back to parent dir
+		dir_change("..");
 	}
+	//remove the directory
 	printf(name);
+	printf("\n");
 
+	//find dir we are removing in current dir
+	for(i = 2; i < curDir.numEntry; i++){
+		if(curDir.dentry[i].inode == inodeNum){
+			//if its the last entry in dir just decrease size
+			if(i == curDir.numEntry - 1){
+				curDir.numEntry--;
+			//else replace it with the last entry and decrease size
+			}else{
+				curDir.dentry[i] = curDir.dentry[curDir.numEntry - 1];
+				curDir.numEntry--;
+			}
+			break;
+		}
+	}
+
+	//free datablock
+	set_bit(blockMap, inode[inodeNum].directBlock[0], 0);
+	//free inode
+	set_bit(inodeMap, inodeNum, 0);
 	return 0;
 }
 
