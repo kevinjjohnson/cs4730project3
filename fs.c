@@ -487,7 +487,7 @@ int dir_remove(char *name)
 
 	printf("looking for inode: %d\n", inodeNum);
 	//find dir we are removing in current dir
-	for(i = 2; i < curDir.numEntry; i++){
+	for(i = 1; i < curDir.numEntry; i++){	
 		printf("checking against: %d\n", curDir.dentry[i].inode);
 		if(curDir.dentry[i].inode == inodeNum){
 			//if its the last entry in dir just decrease size
