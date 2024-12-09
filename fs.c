@@ -468,7 +468,7 @@ int dir_remove(char *name)
 	disk_read(dirBlock, (char*)&dir);
 	printf(name);
 	if(dir.numEntry != 2){
-		for(int i = 0; i < dir.numEntry; i++){
+		for(int i = 2; i < dir.numEntry; i++){
 			dir_change(name);
 			int res = dir_remove(dir.dentry[i].name);
 			dir_change("..");
