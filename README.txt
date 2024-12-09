@@ -11,3 +11,5 @@ for mkdir i tested making directories in the root directory as well making direc
 sure everything was correct.
 for rmdir, i test removing directories, nested directories, unnested directory in another directory, and removing directories with files to make sure
 they wont be removed.
+
+Design description: not really sure what to put here. followed the design of EXT2 and what was given in the powerpoint. Code is mostly commented aswell.

@@ -274,9 +274,11 @@ int file_read(char *name, int offset, int size)
 		return -1;
 	}
 
+	//make output buffer so dont print from datablocks
 	output = (char *) malloc(sizeof(char) * (size + 1));
 	output[size] = '\0';
 
+	//calc offsets
 	readBlock = offset / BLOCK_SIZE;
 	readOffset = offset % BLOCK_SIZE;
 	readSize = size;
@@ -287,10 +289,12 @@ int file_read(char *name, int offset, int size)
 		block = inode[inodeNum].directBlock[i];
 		disk_read(block, buff);
 
+		//if theres more than a full block to read can just read a full block
 		if(readSize >= BLOCK_SIZE){
 			memcpy((output + cur), buff + readOffset, BLOCK_SIZE - readOffset);
 			cur+= BLOCK_SIZE - readOffset;
 			readSize -= (BLOCK_SIZE - readOffset);
+		//read partial block
 		}else{
 			memcpy( (output + cur), buff + readOffset, readSize);
 			cur+= readSize - 1;
@@ -300,6 +304,7 @@ int file_read(char *name, int offset, int size)
 
 		readOffset = 0;
 	}
+	//print from output buffer
 	printf("%s\n", output);
 	gettimeofday( &(inode[inodeNum].lastAccess), NULL );
 	free(output);
