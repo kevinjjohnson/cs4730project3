@@ -467,7 +467,6 @@ int dir_remove(char *name)
 	dirBlock = inode[inodeNum].directBlock[0];
 	disk_read(dirBlock, (char*)&dir);
 
-	int i;
 	if(dir.numEntry != 2){
 		for(int i = 0; i < dir.numEntry; i++){
 			dir_change(name);
@@ -478,8 +477,6 @@ int dir_remove(char *name)
 		}
 	}
 	printf(name);
-
-
 
 	return 0;
 }
