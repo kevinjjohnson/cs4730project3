@@ -351,19 +351,14 @@ int file_remove(char *name)
 		return -1;
 	}
 
-	printf("removing file with inodenum: %d\n", inodeNum);
-
 	//find the file to be removed in the curdir
 	int ind = 0;
 	for(i = 0; i < curDir.numEntry; i++){
 		if(curDir.dentry[i].inode == inodeNum)ind = i;
 	}
-	printf("removing file with index: %d\n", ind);
 
-	printf("NUMENTRYS IN CURRENT DIR: %d\n", curDir.numEntry);
 	//replace file in dir with the last one and then set count - 1
 	if(ind != curDir.numEntry - 1){
-		printf("RAN THIS WHY IS IT NOT WORKING IDK MAN THIS SHIT IS FUCKED");
 		curDir.dentry[ind].inode = curDir.dentry[curDir.numEntry - 1].inode;
 		strncpy(curDir.dentry[ind].name, curDir.dentry[curDir.numEntry - 1].name, strlen(curDir.dentry[curDir.numEntry - 1].name));
 	}
@@ -453,7 +448,39 @@ int dir_make(char* name)
 
 int dir_remove(char *name)
 {
-	printf("Error: rmdir is not implemented.\n");
+	int inodeNum, dirBlock, i;
+	Dentry dir;
+
+	inodeNum = search_cur_dir(name);
+
+	if(inodeNum < 0)
+	{
+		printf("rmdir error: directory not found\n");
+		return -1;
+	}
+	if(inode[inodeNum].type == file)
+	{
+		printf("rmdir error: cannot remove file\n");
+		return -1;
+	}
+
+	dirBlock = inode[inodeNum].directBlock[0];
+	disk_read(dirBlock, (char*)&dir);
+
+	int i;
+	if(dir.numEntry != 2){
+		for(int i = 0; i < dir.numEntry; i++){
+			dir_change(name);
+			int res = dir_remove(dir.dentry[i].name);
+			dir_change("..");
+			if(res == -1)
+				return res;
+		}
+	}
+	printf(name);
+
+
+
 	return 0;
 }
 
@@ -465,8 +492,8 @@ int dir_change(char* name)
 		inodeNum = search_cur_dir(name);
 		if (inodeNum < 0)
 		{
-				printf("cd error: %s does not exist\n", name);
-				return -1;
+			printf("cd error: %s does not exist\n", name);
+			return -1;
 		}
 		if (inode[inodeNum].type != directory)
 		{
@@ -492,10 +519,10 @@ int ls()
 		int i;
 		for(i = 0; i < curDir.numEntry; i++)
 		{
-				int n = curDir.dentry[i].inode;
-				if(inode[n].type == file) printf("type: file, ");
-				else printf("type: dir, ");
-				printf("name \"%s\", inode %d, size %d byte\n", curDir.dentry[i].name, curDir.dentry[i].inode, inode[n].size);
+			int n = curDir.dentry[i].inode;
+			if(inode[n].type == file) printf("type: file, ");
+			else printf("type: dir, ");
+			printf("name \"%s\", inode %d, size %d byte\n", curDir.dentry[i].name, curDir.dentry[i].inode, inode[n].size);
 		}
 
 		return 0;
